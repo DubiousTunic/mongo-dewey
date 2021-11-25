@@ -106,7 +106,7 @@ $(document).ready(function(){
 		*/
 		$(form_button).click(function(){
 			$.post("/add_class", {parent : class_id, class : $(form_input_1).val(), decimal: $(form_input_2).val()});
-			ANCHOR.route("#classes");
+			
 		})		
 
 		createRealtime(form_input_0, form_div, form_parent);
@@ -131,7 +131,7 @@ $(document).ready(function(){
 							var li = document.createElement("li");
 							var a = document.createElement("a");
 							$(li).append(a);
-							$(a).text(el.decimal + " " + el.class)
+							$(a).text(el.decimalStr + " " + el.class)
 							$(a).click(function(e){
 								e.preventDefault();
 								class_id = el._id;
