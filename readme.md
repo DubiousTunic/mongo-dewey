@@ -1,3 +1,7 @@
+<h1>Readme</h1>
+<h2>What is it</h2>
+Run a browser-editable Dewey decimal system on MongoDB
+
 <h2>clientside</h2>
 make a div with id "dewey_classes". attach script classController to it.
 <br>
