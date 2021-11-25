@@ -2,11 +2,14 @@ $(document).ready(function(){
 
 	$.get("/expand_class/null", function(data){
 
-		$("#classes").prepend(createForm());
+		$("#dewey_classes").prepend(createForm());
 
+		var class_area = document.createElement("div");
+
+		$("#dewey_classes").append(class_area);
 		console.log(data);
 		dropClass(data.result, function(err, la){
-			$(".class_area").append(la);
+			$(class_area).append(la);
 		})
 	})
 
@@ -36,7 +39,7 @@ $(document).ready(function(){
 		var li = document.createElement("li");
 		var class_heading_a = document.createElement("a");
 		$(li).append(class_heading_a)				
-		$(class_heading_a).ftext(el.decimalStr + " " + el.class)
+		$(class_heading_a).text(el.decimalStr + " " + el.class)
 		$(class_heading_a).attr("href", "#classes?dec="+el.decimalStr);
 		$(class_ul).append(li);
 
