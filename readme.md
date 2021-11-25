@@ -2,6 +2,8 @@
 make a div with id "dewey_classes". attach script classController to it.
 <br>
 <h2>serverside</h2>
+    edit uri in module to your mongodb server uri
+
     class_module = require("./class_module");
     bodyParser= require('body-parser');
     app.post("/add_class", function(req, res){        
