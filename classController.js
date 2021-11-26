@@ -1,19 +1,21 @@
 $(document).ready(function(){
 
-	$.get("/expand_class/null", function(data){
+	var class_data;
 
+	$.get("/expand_class/null", function(data){
+		class_data = data.result;
 		$("#dewey_classes").prepend(createForm());
 
 		var class_area = document.createElement("div");
-
+		$(class_area).addClass("class_area");
 		$("#dewey_classes").append(class_area);
 		console.log(data);
-		dropClass(data.result, function(err, la){
+		expandClass(data.result, function(err, la){
 			$(class_area).append(la);
 		})
 	})
 
-	function dropClass(data, cb){
+	function expandClass(data, cb){
 		var class_dropdown = document.createElement("div");
 		$(class_dropdown).addClass("class_dropdown");
 		var class_ul = document.createElement("ul");
@@ -21,8 +23,6 @@ $(document).ready(function(){
 		
 		$(class_dropdown).append(class_heading);
 		$(class_dropdown).append(class_ul);
-
-		console.log(data);
 
 		if(cb)
 			cb(null, class_dropdown);
@@ -32,7 +32,6 @@ $(document).ready(function(){
 				createHeading(class_ul, el)			
 			})	
 		}
-		
 	}
 
 	function createHeading(class_ul, el){
@@ -42,7 +41,6 @@ $(document).ready(function(){
 		$(class_heading_a).text(el.decimalStr + " " + el.class)
 		$(class_heading_a).attr("href", "#classes?dec="+el.decimalStr);
 		$(class_ul).append(li);
-
 
 		var class_heading_b = document.createElement("a");
 		$(class_heading_b).attr("href", "#");
@@ -62,7 +60,7 @@ $(document).ready(function(){
 			$(class_heading_b).toggle();
 			e.preventDefault();
 			$.get("/expand_class/" + el._id, function(data){
-				dropClass(data.result, function(err, la){
+				expandClass(data.result, function(err, la){
 					$(li).append(la);
 				})
 			})
@@ -84,6 +82,8 @@ $(document).ready(function(){
 
 		var form_parent = document.createElement("span");		
 
+		$(form_parent).css({color: "darkgoldenrod"})
+
 		$(form_input_2).css({"width": 77})
 		$(form_input_0).css({"width" : 77})
 
@@ -94,8 +94,9 @@ $(document).ready(function(){
 		$(class_form).append(form_input_0);
 		$(class_form).append(form_parent);
 		$(class_form).append("<br>");
-		$(class_form).append(form_input_1);
 		$(class_form).append(form_input_2);
+		$(class_form).append(form_input_1);
+		
 		var form_button = document.createElement("button");
 		$(class_form).append(form_button);
 
@@ -105,8 +106,9 @@ $(document).ready(function(){
 			ADD CLASS 
 		*/
 		$(form_button).click(function(){
-			$.post("/add_class", {parent : class_id, class : $(form_input_1).val(), decimal: $(form_input_2).val()});
-			
+			$.post("/add_class", {parent : class_id, class : $(form_input_1).val(), decimal: $(form_input_2).val()}, function(){
+				expandClass(class_data);
+			});
 		})		
 
 		createRealtime(form_input_0, form_div, form_parent);
@@ -125,9 +127,9 @@ $(document).ready(function(){
 				$.get("/realtime_class/" + $(form_input).val(), function(data){
 					console.log(data.result);
 					var ul = document.createElement("ul");
+					$(ul).css({position:"absolute"})
 					if(data && data.result){
 						data.result.forEach(function(el){
-							console.log(el);
 							var li = document.createElement("li");
 							var a = document.createElement("a");
 							$(li).append(a);
