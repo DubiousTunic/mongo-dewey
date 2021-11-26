@@ -3,15 +3,15 @@ const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://root:root@cluster0.k4kb4.mongodb.net/Cluster0?retryWrites=true&w=majority";
 
 module.exports = {
-	add_class : function(cb){
+	add_class : function(parent_id, decimal, claus){
 		const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         //gets 5 most recent doc
 
-        console.log(req.body.parent, req.body.class, req.body.decimal);
+        console.log(decimal);
 
         var parent = "";
         try{
-            parent = ObjectId(req.body.parent);
+            parent = ObjectId(parent_id);
         }
         catch{
             parent = "null"
@@ -19,7 +19,7 @@ module.exports = {
         client.connect(err => {       
             const col = client.db("Cluster0").collection("dewey")
 
-            col.insertOne({parent: parent, decimal : parseFloat(req.body.decimal), decimalStr : req.body.decimal.toString(), class : req.body.class})
+            col.insertOne({parent: parent, decimal : parseFloat(decimal), decimalStr : decimal.toString(), class : claus})
         })
 	},
 	expand_class : function(parent_id, cb){
@@ -35,7 +35,7 @@ module.exports = {
 	            parent = "null";
 	        }
 
-	        col.find({parent: parent}).toArray(function(err, result){
+	        col.find({parent: parent}).sort({decimal : 1}).toArray(function(err, result){
 	            cb(null, {result : result});            
 	        });
 	    })
@@ -46,9 +46,20 @@ module.exports = {
 	    client.connect(err => {    
 	        const col = client.db("Cluster0").collection("dewey")
 
-	        col.find({decimalStr : req.params.str}).toArray(function(err, result){
+	        if(isFloat(parseFloat(str)) || Number.isInteger(parseInt(str))){
+	        	var param = { decimalStr : str};
+	        }
+	        else{
+	        	var param = { $text : {$search : str} }
+	        }
+
+	        col.find(param).toArray(function(err, result){
 	            cb(null, {result : result});            
 	        });
 	    })
 	}
+}
+
+function isFloat(n){
+    return Number(n) === n && n % 1 !== 0;
 }
